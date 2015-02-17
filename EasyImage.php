@@ -263,9 +263,10 @@ class EasyImage extends CApplicationComponent
      * This method returns the URL to the cached thumbnail.
      * @param string $file path
      * @param array $params
+     * @param boolean $force Force update of thumbnail
      * @return string URL path
      */
-    public function thumbSrcOf($file, $params = array())
+    public function thumbSrcOf($file, $params = array(), $force = false)
     {
         // Paths
         $hash = md5($file . serialize($params));
@@ -276,7 +277,7 @@ class EasyImage extends CApplicationComponent
         $webCacheFile = Yii::app()->baseUrl . $this->cachePath . $hash{0} . '/' . $cacheFileName;
 
         // Return URL to the cache image
-        if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $this->cacheTime)) {
+        if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $this->cacheTime) && !$force) {
             return $webCacheFile;
         }
 
@@ -318,12 +319,13 @@ class EasyImage extends CApplicationComponent
      * @param string $file path
      * @param array $params
      * @param array $htmlOptions
+     * @param boolean $force Force update of thumbnail
      * @return string HTML
      */
-    public function thumbOf($file, $params = array(), $htmlOptions = array())
+    public function thumbOf($file, $params = array(), $htmlOptions = array(), $force = false)
     {
         return CHtml::image(
-            $this->thumbSrcOf($file, $params),
+            $this->thumbSrcOf($file, $params, $force),
             isset($htmlOptions['alt']) ? $htmlOptions['alt'] : '',
             $htmlOptions
         );
